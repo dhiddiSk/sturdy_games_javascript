@@ -1,136 +1,60 @@
-// 1) The active player get's the background color with white light
-// 2) When user roles the dice, 
-// the output of the dice is filled in the current box and it get's summed up with the previous value: done
-// 3) If the user press the hold button then the score from the current box get's summed up to the players score: done
-// 4) If the user roles the dice and hits the count as 1, 
-//then the current score turns to zero and the another player get's the chance to play: done
-// 5) If the player who crosses the score more than hundered then that particular player wins the game.
+'use strict';
+let playersScoresArray = [];
+let activePlayer = 0;
+let activePlayerCurrentScore = 0;
+let gameStarted = false;
+
+const buttonNew = document.querySelector('.btn--new');
+const buttonRoll = document.querySelector('.btn--roll');
+const buttonHold = document.querySelector('.btn--hold');
 
 
-let playerOneCurrent = 0;
-let playerTwoCurrent = 0;
-let playerOneTotal = 0;
-let playerTwoTotal = 0;
-
-const btnNew = document.querySelector('.btn--new');
-const btnRoll = document.querySelector('.btn--roll');
-const btnHold = document.querySelector('.btn--hold');
-
-const playerOneScore = document.querySelector('#score--0');
-const playerTwoScore = document.querySelector('#score--1');
-const playerOneCurrentScore = document.querySelector('#current--0');
-const playerTwoCurrentScore = document.querySelector('#current--1');
-
-let playerOneActive = true;
-let playerTwoActive = false;
-
-
-btnNew.addEventListener('click', function () {
-    playerOneScore.textContent = 0;
-    playerTwoScore.textContent = 0;
-    playerOneCurrentScore.textContent = 0;
-    playerTwoCurrentScore.textContent = 0;
-    playerOneCurrent = 0;
-    playerTwoCurrent = 0;
-    playerOneTotal = 0;
-    playerTwoTotal = 0;
-    playerOneActive = true;
-    playerTwoActive = false;
-    document.querySelector('.player--0').classList.add('player--active');
-    document.querySelector('.player--1').classList.remove('player--active');
+buttonNew.addEventListener('click', function () {
+    playersScoresArray[0] = 0;
+    playersScoresArray[1] = 0;
     document.querySelector('.dice').classList.add('hidden');
+    document.querySelector(`#current--0`).textContent = 0;
+    document.querySelector(`#current--1`).textContent = 0;
+    document.querySelector(`#score--0`).textContent = 0;
+    document.querySelector(`#score--1`).textContent = 0;
+    activePlayer = 0;
+    activePlayerCurrentScore = 0;
+    gameStarted = true;
 });
 
-const updateScore = function(){
-    playerOneTotal += playerOneCurrent;
-    if(playerOneTotal >= 100){
-        playerOneScore.textContent = playerOneTotal + "won the game";
-    }
-    else{
-    playerOneScore.textContent = playerOneTotal;
-    playerOneCurrent = 0;
-    playerOneCurrentScore.textContent = 0;
-    }
+buttonHold.addEventListener('click', function () {
+    playersScoresArray[activePlayer] = playersScoresArray[activePlayer] + activePlayerCurrentScore;
+    document.querySelector(`#score--${activePlayer}`).textContent = playersScoresArray[activePlayer];
+    document.querySelector(`#current--${activePlayer}`).textContent = 0;
+    activePlayerCurrentScore = 0;
+});
+
+function switchUser() {
+    document.querySelector(`.player--${activePlayer}`).classList.toggle('player--active');
+    activePlayerCurrentScore = 0;
+    document.querySelector(`#current--${activePlayer}`).textContent = activePlayerCurrentScore;
+    activePlayer = activePlayer === 0 ? 1 : 0;
+    document.querySelector(`.player--${activePlayer}`).classList.toggle('player--active');
 }
 
 
-// diceOutPut -> If it's one / other -> shifted players using the class name of the elements -> changed everything 
-// class="player player--0 player--active
-// id="score--0"
-// id="current--0"
-// Use array to save the score values based on the id numbers.
 
+buttonRoll.addEventListener('click', function () {
 
-btnHold.addEventListener('click', function () {
-
-    if (playerOneActive) {
-        playerOneTotal += playerOneCurrent;
-        if(playerOneTotal >= 100){
-            playerOneScore.textContent = playerOneTotal + "won the game";
-        }
-        else{
-        playerOneScore.textContent = playerOneTotal;
-        playerOneCurrent = 0;
-        playerOneCurrentScore.textContent = 0;
-        }
-    } else if (playerTwoActive) {
-        playerTwoTotal += playerTwoCurrent;
-        if(playerTwoTotal >= 100){
-            playerTwoScore.textContent = playerTwoTotal + "won the game";
-        }
-        else{
-            playerTwoScore.textContent = playerTwoTotal;
-            playerTwoCurrent = 0;
-            playerTwoCurrentScore.textContent = 0;
-        }       
-    }
-});
-
-btnRoll.addEventListener('click', function () {
-
-   document.querySelector('.dice').classList.remove('hidden');
+    document.querySelector('.dice').classList.remove('hidden');
 
     // The diceRollOutput variable holds the random value generated between 1(inclusive) and 7(exclusive)
-   const diceRollOutput = Math.floor(Math.random() * (Math.floor(7) - Math.ceil(1)) + Math.ceil(1));
-    console.log(diceRollOutput);
-    document.querySelector('.dice').src = `dice-${diceRollOutput}.png`;
+    const diceRollOutput = Math.floor(Math.random() * (Math.floor(7) - Math.ceil(1)) + Math.ceil(1));
 
-    if (playerOneActive) {
-        document.querySelector('.player--0').classList.add('player--active');
-        document.querySelector('.player--1').classList.remove('player--active');
+    if (gameStarted) {
 
-        if (diceRollOutput === 1) {
-            playerOneCurrent = 0;
-            playerOneCurrentScore.textContent = playerOneCurrent;
-            playerOneActive = false;
-            playerTwoActive = true;
+        document.querySelector('.dice').src = `dice-${diceRollOutput}.png`;
+
+        if (diceRollOutput !== 1) {
+            activePlayerCurrentScore += diceRollOutput;
+            document.querySelector(`#current--${activePlayer}`).textContent = activePlayerCurrentScore;
         } else {
-            playerOneCurrent += diceRollOutput;
-            playerOneCurrentScore.textContent = playerOneCurrent;
+            switchUser();
         }
     }
-
-    else if (playerTwoActive) {
-
-        document.querySelector('.player--1').classList.add('player--active');
-        document.querySelector('.player--0').classList.remove('player--active');
- 
-        if (diceRollOutput === 1) {
-            playerTwoCurrent = 0;
-            playerTwoCurrentScore.textContent = playerTwoCurrent;
-            playerOneActive = true;
-            playerTwoActive = false;
-        } else {
-            playerTwoCurrent += diceRollOutput;
-            playerTwoCurrentScore.textContent = playerTwoCurrent;
-        }
-    }
-
-})
-
-btnHold.addEventListener('click', function () {
-
-    playerOneTotal += playerOneCurrent;
-    playerOneScore.textContent = playerOneTotal;
-
-})
+});
