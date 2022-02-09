@@ -7,8 +7,7 @@ The second player get's chance to roll the dice when the first player's dice rol
 
 |<img src="GameScreenShot.png" width="450" height="300" >
 
-
-# GuessMyNumber_game_javascript
+___________________________________________________________________________________________________________________________________________________________________________________________
 
 GuessMyNumber: This game allows the player to enter the guessed number and check if the entered number matches with the system-generated number or not.
 The player is also provided with hints to the user if the entered number is lower or higher than the actual number. The total number of wrong tries can proportionally
