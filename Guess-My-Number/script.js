@@ -48,8 +48,11 @@ document.querySelector('.check').addEventListener('click', function () {
     }
 
     else if (enteredNumber === 0){
-        textContentUpdater('.message', 'please enter number');
+        textContentUpdater('.message', 'please enter number greater than zero');
     }
+
+    console.log("The execution is here in the end of the function.");
+    document.querySelector('.guess').value = '';
 
 })
 
@@ -59,7 +62,6 @@ document.querySelector('.again').addEventListener('click', function () {
     document.querySelector('.number').style.width = "12rem";
     document.querySelector('.guess').value = '';
     guessNumber = Math.floor((Math.random()) * 20);
-    textContentUpdater('.number', guessNumber);
     textContentUpdater('.message', "Guess the number");
     textContentUpdater('.score', 20);
     score = Number(document.querySelector('.score').textContent);
